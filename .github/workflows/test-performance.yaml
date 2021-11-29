@@ -9,6 +9,15 @@ jobs:
       - name: install sysbench
         run: |
           sudo apt install -y sysbench
+
       - name: cpu
         run: |
           sysbench --test=cpu run
+
+      - name: ram
+        run: |
+          sysbench --test=memory run
+
+      - name:  IO
+        run: |
+          sysbench --test=fileio --file-test-mode=seqwr run
