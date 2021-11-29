@@ -9,7 +9,8 @@ on:
 
 jobs:
   build_image:
-    runs-on: ubuntu-latest
+#    runs-on: ubuntu-latest
+    runs-on: buildjet-4vcpu-ubuntu-1804
     env:
       PGVERSION: 13
       BASE_IMAGE: 'registry.opensource.zalan.do/library/ubuntu-18.04'
@@ -22,18 +23,19 @@ jobs:
 
 #      - name: Login to ACR
 #        run: |
-#          az acr login --name titanacr
+#          az acr login --name myacr
 
       - uses: actions/checkout@v2
         with:
           repository: 'zalando/spilo'
           ref: ${{ github.event.inputs.release_tag }}
 
+      # Build docker image in https://github.com/zalando/spilo/tree/master/postgres-appliance
       - run: |
           cd postgres-appliance;
           docker build --build-arg PGVERSION=$PGVERSION \
                        --build-arg BASE_IMAGE=$BASE_IMAGE \
                        --build-arg TIMESCALEDB_APACHE_ONLY=$TIMESCALEDB_APACHE_ONLY \
-                       --tag titanacr.azurecr.io/spilo-$PGVERSION:${{ github.event.inputs.release_tag }} .
-#          docker push titanacr.azurecr.io/spilo-$PGVERSION:${{ github.event.inputs.release_tag }}
+                       --tag myacr.azurecr.io/spilo-$PGVERSION:${{ github.event.inputs.release_tag }} .
+#          docker push myacr.azurecr.io/spilo-$PGVERSION:${{ github.event.inputs.release_tag }}
 
