@@ -1,0 +1,39 @@
+name: Build spilo docker image
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'spilo release tag'
+        required: true
+        default: '2.1-p1'
+
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+    env:
+      PGVERSION: 13
+      BASE_IMAGE: 'registry.opensource.zalan.do/library/ubuntu-18.04'
+      TIMESCALEDB_APACHE_ONLY: false
+    steps:
+#      - name: Login to Azure
+#        uses: Azure/login@v1.1
+#        with:
+#          creds: '{"clientId":"${{ secrets.SP_CLIENT_ID }}","clientSecret":"${{ secrets.SP_CLIENT_PASSWORD }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+
+#      - name: Login to ACR
+#        run: |
+#          az acr login --name titanacr
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'zalando/spilo'
+          ref: ${{ github.event.inputs.release_tag }}
+
+      - run: |
+          cd postgres-appliance;
+          docker build --build-arg PGVERSION=$PGVERSION \
+                       --build-arg BASE_IMAGE=$BASE_IMAGE \
+                       --build-arg TIMESCALEDB_APACHE_ONLY=$TIMESCALEDB_APACHE_ONLY \
+                       --tag titanacr.azurecr.io/spilo-$PGVERSION:${{ github.event.inputs.release_tag }} .
+#          docker push titanacr.azurecr.io/spilo-$PGVERSION:${{ github.event.inputs.release_tag }}
+
