@@ -4,7 +4,8 @@ on:
 
 jobs:
   run_sysbench:
-    runs-on: ubuntu-18.04
+#    runs-on: ubuntu-18.04
+    runs-on: buildjet-2vcpu-ubuntu-1804
     steps:
       - name: install sysbench
         run: |
